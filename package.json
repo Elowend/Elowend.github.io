@@ -3,7 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "homepage": "https://herbsyn123-glitch.github.io/herbsyn123--.github.io/",
+  "homepage": "https://elowend.github.io/",
   "scripts": {
     "dev": "vite",
     "build": "vite build && cp docs/index.html docs/404.html",

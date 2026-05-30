@@ -54,7 +54,7 @@ function AppContent() {
 
 function App() {
   return (
-    <BrowserRouter basename="/herbsyn123--.github.io">
+    <BrowserRouter>
       <AppContent />
     </BrowserRouter>
   )
