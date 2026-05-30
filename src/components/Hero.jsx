@@ -31,7 +31,7 @@ function Hero({ bootComplete }) {
   }, [bootComplete])
 
   return (
-    <main className={`min-h-screen flex flex-col items-center justify-center px-margin-mobile md:px-margin-desktop pt-24 pb-12 max-w-container-max mx-auto ${bootComplete ? 'boot-sequence' : 'opacity-0'}`}>
+    <main className={`min-h-screen flex flex-col items-center justify-center px-margin-mobile md:px-margin-desktop pt-24 pb-12 max-w-container-max mx-auto ${bootComplete ? 'boot-sequence' : 'invisible h-0 overflow-hidden'}`}>
       <section className="relative w-full flex flex-col items-center md:items-start text-center md:text-left">
         <div className="absolute -top-12 left-0 font-code-sm text-code-sm text-outline-variant opacity-50 hidden md:block select-none">
           0x01_INITIALIZING_SEQUENCE

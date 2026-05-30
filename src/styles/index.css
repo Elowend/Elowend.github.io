@@ -129,7 +129,6 @@
 
 .boot-sequence {
   animation: crt-boot 0.8s cubic-bezier(0.23, 1, 0.32, 1) forwards;
-  animation-delay: 1.5s;
   opacity: 0;
 }
 
@@ -254,9 +253,15 @@
   .glitch-text,
   .glitch-hover:hover,
   .scanline-moving,
-  .boot-sequence,
   .cursor-blink,
   .blink {
     animation: none !important;
+  }
+
+  .boot-sequence {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
   }
 }
