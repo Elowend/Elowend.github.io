@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ELOWEN // CONTACT_ME</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&amp;family=Space+Grotesk:wght@600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+        .cursor-blink {
+            animation: blink 1s step-end infinite;
+        }
+        .scanline-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                to bottom,
+                transparent 50%,
+                rgba(0, 255, 136, 0.03) 50%
+            );
+            background-size: 100% 4px;
+            z-index: 100;
+            pointer-events: none;
+        }
+        .glitch-hover:hover {
+            text-shadow: 2px 0 #ff00ff, -2px 0 #00d4ff;
+        }
+        .chamfer-border {
+            clip-path: polygon(10% 0, 90% 0, 100% 10%, 100% 90%, 90% 100%, 10% 100%, 0 90%, 0 10%);
+        }
+        .typography-gradient {
+            background: linear-gradient(to bottom, #004e28, #00ff88);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        body {
+            background-color: #0a0a0f;
+            scrollbar-width: thin;
+            scrollbar-color: #3b4b3d #0a0a0f;
+            cursor: none;
+        }
+        .mouse-ripple {
+            position: fixed;
+            width: 40px;
+            height: 40px;
+            border: 1px solid rgba(0, 255, 136, 0.3);
+            border-radius: 50%;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            transition: width 0.1s ease-out, height 0.1s ease-out;
+            z-index: 9999;
+        }
+        .nav-link-transition {
+            transition: opacity 0.4s ease-in-out, transform 0.3s ease;
+        }
+        .page-transition {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "outline-variant": "#3b4b3d",
+                      "surface": "#131318",
+                      "on-tertiary-fixed-variant": "#004e5f",
+                      "inverse-on-surface": "#303036",
+                      "tertiary-fixed": "#b4ebff",
+                      "inverse-primary": "#006d37",
+                      "surface-container-low": "#1b1b20",
+                      "surface-tint": "#00e479",
+                      "on-primary-container": "#007139",
+                      "secondary-container": "#fe00fe",
+                      "surface-variant": "#35343a",
+                      "on-tertiary-container": "#006b82",
+                      "on-tertiary": "#003642",
+                      "on-primary": "#003919",
+                      "on-primary-fixed-variant": "#005228",
+                      "on-tertiary-fixed": "#001f27",
+                      "tertiary-container": "#a7e8ff",
+                      "on-secondary-fixed": "#380038",
+                      "on-surface-variant": "#b9cbb9",
+                      "outline": "#849585",
+                      "tertiary-fixed-dim": "#3cd7ff",
+                      "tertiary": "#f6fcff",
+                      "surface-bright": "#39383e",
+                      "primary-container": "#00ff88",
+                      "on-secondary": "#5b005b",
+                      "surface-container-lowest": "#0e0e13",
+                      "on-surface": "#e4e1e9",
+                      "secondary-fixed": "#ffd7f5",
+                      "primary": "#f1ffef",
+                      "primary-fixed-dim": "#00e479",
+                      "on-secondary-container": "#500050",
+                      "error-container": "#93000a",
+                      "inverse-surface": "#e4e1e9",
+                      "secondary-fixed-dim": "#ffabf3",
+                      "on-background": "#e4e1e9",
+                      "surface-container": "#1f1f25",
+                      "surface-dim": "#131318",
+                      "on-secondary-fixed-variant": "#810081",
+                      "surface-container-highest": "#35343a",
+                      "on-primary-fixed": "#00210c",
+                      "secondary": "#ffabf3",
+                      "error": "#ffb4ab",
+                      "on-error": "#690005",
+                      "primary-fixed": "#60ff99",
+                      "on-error-container": "#ffdad6",
+                      "background": "#131318",
+                      "surface-container-high": "#2a292f"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "margin-desktop": "64px",
+                      "container-max": "1280px",
+                      "gutter": "24px",
+                      "margin-mobile": "16px",
+                      "unit": "4px"
+              },
+              "fontFamily": {
+                      "body-lg": ["JetBrains Mono"],
+                      "display-lg": ["Space Grotesk"],
+                      "headline-lg-mobile": ["Space Grotesk"],
+                      "code-sm": ["JetBrains Mono"],
+                      "headline-md": ["Space Grotesk"],
+                      "body-md": ["JetBrains Mono"],
+                      "headline-lg": ["Space Grotesk"],
+                      "label-md": ["JetBrains Mono"]
+              },
+              "fontSize": {
+                      "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                      "display-lg": ["72px", {"lineHeight": "1.1", "letterSpacing": "0.1em", "fontWeight": "700"}],
+                      "headline-lg-mobile": ["32px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                      "code-sm": ["12px", {"lineHeight": "1.4", "fontWeight": "400"}],
+                      "headline-md": ["24px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                      "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                      "headline-lg": ["48px", {"lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                      "label-md": ["14px", {"lineHeight": "1.4", "letterSpacing": "0.05em", "fontWeight": "500"}]
+              }
+            },
+          },
+        }
+    </script>
+</head>
+<body class="bg-background text-on-background font-body-md overflow-x-hidden selection:bg-primary-container selection:text-on-primary-container page-transition">
+<!-- Scanline Overlay -->
+<div class="scanline-overlay"></div>
+<!-- Mouse Ripple Element -->
+<div class="mouse-ripple" id="mouse-ripple"></div>
+<!-- Background Grid & Scanlines -->
+<div class="fixed inset-0 z-0 pointer-events-none opacity-20">
+<div class="absolute inset-0" style="background-image: radial-gradient(circle at 2px 2px, #2a2a3a 1px, transparent 0); background-size: 40px 40px;"></div>
+</div>
+<!-- TopNavBar -->
+<nav class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-margin-desktop py-4 max-w-container-max mx-auto bg-background/80 backdrop-blur-md border-b-2 border-outline-variant">
+<div class="font-display-lg text-display-lg text-primary-fixed-dim drop-shadow-[0_0_10px_rgba(0,228,121,0.6)] animate-pulse">
+        E
+    </div>
+<div class="flex gap-8 items-center">
+<div class="hidden md:flex gap-6 font-body-md text-body-md uppercase tracking-widest">
+<a class="nav-link-transition text-on-surface-variant hover:text-primary-fixed-dim hover:skew-x-2" href="#">HOME</a>
+<a class="nav-link-transition text-on-surface-variant hover:text-primary-fixed-dim hover:skew-x-2" href="#">ABOUT ME</a>
+<a class="nav-link-transition text-on-surface-variant hover:text-primary-fixed-dim hover:skew-x-2" href="#">WORKS</a>
+<a class="nav-link-transition text-primary-fixed-dim border-b-2 border-primary-fixed-dim pb-1 shadow-[0_0_15px_rgba(0,255,136,0.4)]" href="#">CONTACT ME</a>
+</div>
+<button class="text-primary-fixed-dim hover:drop-shadow-[0_0_8px_rgba(0,255,136,0.8)]">
+<span class="material-symbols-outlined">terminal</span>
+</button>
+</div>
+</nav>
+<main class="relative z-10 pt-32 pb-24 px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto grid grid-cols-1 md:grid-cols-12 gap-gutter">
+<!-- Left Column: Status & Avatar -->
+<div class="md:col-span-4 flex flex-col gap-8">
+<!-- Avatar Section -->
+<div class="relative group">
+<div class="chamfer-border bg-surface-container-high border-2 border-outline-variant w-full aspect-square flex items-center justify-center overflow-hidden transition-all duration-500 group-hover:border-primary-fixed-dim group-hover:shadow-[0_0_20px_rgba(0,255,136,0.2)]">
+<div class="text-center font-code-sm uppercase space-y-2">
+<div class="text-outline-variant text-[64px] material-symbols-outlined">account_circle</div>
+<div class="text-primary-fixed-dim font-bold tracking-tighter">[ AVATAR SLOT ]</div>
+<div class="text-on-surface-variant opacity-50">NO_DATA_AVAILABLE</div>
+</div>
+</div>
+<div class="absolute -top-2 -left-2 bg-primary-container text-on-primary-fixed px-3 py-1 font-code-sm font-bold">
+                REF_042
+            </div>
+</div>
+<!-- Metadata Card -->
+<div class="bg-surface-container-low border border-outline-variant p-6 space-y-4">
+<div class="flex justify-between items-center border-b border-outline-variant pb-2">
+<span class="text-primary-fixed-dim font-bold uppercase text-label-md">Status</span>
+<div class="flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-primary-fixed-dim animate-pulse shadow-[0_0_8px_#00ff88]"></div>
+<span class="text-on-surface font-code-sm">ONLINE</span>
+</div>
+</div>
+<ul class="space-y-3 font-code-sm">
+<li class="flex justify-between">
+<span class="text-on-surface-variant">0x01 LOCATION:</span>
+<span class="text-on-surface uppercase">S_SPRAWL_SECTOR_7</span>
+</li>
+<li class="flex justify-between">
+<span class="text-on-surface-variant">0x02 UPTIME:</span>
+<span class="text-on-surface">99.98%</span>
+</li>
+<li class="flex justify-between">
+<span class="text-on-surface-variant">0x03 ENCRYPTION:</span>
+<span class="text-secondary">AES_256_GCM</span>
+</li>
+</ul>
+</div>
+</div>
+<!-- Right Column: Contact Interface -->
+<div class="md:col-span-8 flex flex-col gap-8">
+<div class="space-y-2">
+<h1 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg uppercase tracking-tighter typography-gradient">
+                Establish <span class="text-primary-fixed-dim">Link_</span>
+</h1>
+<p class="font-body-lg text-on-surface-variant max-w-xl">
+                Initiate a peer-to-peer connection for professional collaboration or technical inquiries. Secure channels only.
+            </p>
+</div>
+<!-- Terminal Form -->
+<div class="bg-surface-container-low border border-outline-variant rounded-none relative">
+<div class="bg-outline-variant/30 px-4 py-2 flex items-center justify-between border-b border-outline-variant">
+<div class="flex gap-2">
+<div class="w-3 h-3 rounded-none bg-error/50"></div>
+<div class="w-3 h-3 rounded-none bg-primary-fixed-dim/50"></div>
+<div class="w-3 h-3 rounded-none bg-tertiary-fixed-dim/50"></div>
+</div>
+<span class="text-on-surface-variant font-code-sm tracking-widest uppercase">sys.msg_sender.v2</span>
+</div>
+<div class="p-8 space-y-8">
+<div class="space-y-6">
+<div class="group">
+<label class="block text-primary-fixed-dim font-code-sm uppercase mb-2">Identify Yourself</label>
+<div class="flex items-center border-b-2 border-outline-variant focus-within:border-primary-fixed-dim transition-colors py-2">
+<span class="text-on-surface-variant mr-3 cursor-blink font-bold">&gt;</span>
+<input class="bg-transparent border-none focus:ring-0 text-on-surface w-full font-body-md placeholder:text-surface-variant" placeholder="GHOST_USER_NAME" type="text"/>
+</div>
+</div>
+<div class="group">
+<label class="block text-primary-fixed-dim font-code-sm uppercase mb-2">Return Address</label>
+<div class="flex items-center border-b-2 border-outline-variant focus-within:border-primary-fixed-dim transition-colors py-2">
+<span class="text-on-surface-variant mr-3 cursor-blink font-bold">&gt;</span>
+<input class="bg-transparent border-none focus:ring-0 text-on-surface w-full font-body-md placeholder:text-surface-variant" placeholder="ENCRYPTED_EMAIL" type="email"/>
+</div>
+</div>
+<div class="group">
+<label class="block text-primary-fixed-dim font-code-sm uppercase mb-2">Protocol Buffer / Message</label>
+<div class="flex items-start border-b-2 border-outline-variant focus-within:border-primary-fixed-dim transition-colors py-2">
+<span class="text-on-surface-variant mr-3 mt-1 cursor-blink font-bold">&gt;</span>
+<textarea class="bg-transparent border-none focus:ring-0 text-on-surface w-full font-body-md placeholder:text-surface-variant resize-none" placeholder="INPUT_DATA_STREAM..." rows="4"></textarea>
+<span class="text-primary-fixed-dim cursor-blink font-bold ml-2">_</span>
+</div>
+</div>
+</div>
+<div class="flex flex-col md:flex-row gap-4">
+<button class="bg-primary-container text-on-primary font-bold px-8 py-4 uppercase tracking-widest flex items-center justify-center gap-3 transition-transform active:scale-95 group relative overflow-hidden">
+<span class="relative z-10">Execute Transfer</span>
+<span class="material-symbols-outlined relative z-10" style="font-variation-settings: 'FILL' 1;">send</span>
+</button>
+<button class="border-2 border-secondary text-secondary font-bold px-8 py-4 uppercase tracking-widest hover:bg-secondary/10 transition-all active:skew-x-2">
+                        Reset Sequence
+                    </button>
+</div>
+</div>
+</div>
+<!-- Social Card Group -->
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-gutter">
+<a class="bg-surface-container p-6 border border-outline-variant hover:border-tertiary-fixed-dim transition-all group" href="#">
+<div class="text-tertiary-fixed-dim mb-4 material-symbols-outlined text-[32px]">chat_bubble</div>
+<div class="font-code-sm text-on-surface-variant uppercase mb-1">WeChat</div>
+<div class="text-on-surface font-bold group-hover:text-primary-fixed-dim transition-colors">wechat_id</div>
+</a>
+<a class="bg-surface-container p-6 border border-outline-variant hover:border-tertiary-fixed-dim transition-all group" href="#">
+<div class="text-tertiary-fixed-dim mb-4 material-symbols-outlined text-[32px]">code</div>
+<div class="font-code-sm text-on-surface-variant uppercase mb-1">GitHub</div>
+<div class="text-on-surface font-bold group-hover:text-primary-fixed-dim transition-colors">github_username</div>
+</a>
+<a class="bg-surface-container p-6 border border-outline-variant hover:border-tertiary-fixed-dim transition-all group" href="#">
+<div class="text-tertiary-fixed-dim mb-4 material-symbols-outlined text-[32px]">camera</div>
+<div class="font-code-sm text-on-surface-variant uppercase mb-1">Xiaohongshu</div>
+<div class="text-on-surface font-bold group-hover:text-primary-fixed-dim transition-colors">account_placeholder</div>
+</a>
+</div>
+</div>
+</main>
+<footer class="w-full px-margin-desktop bg-surface-container-lowest border-t-2 border-outline-variant py-12">
+<div class="max-w-container-max mx-auto flex flex-col md:flex-row justify-between items-center gap-gutter">
+<div class="flex flex-col gap-2 items-center md:items-start">
+<div class="text-label-md font-label-md text-on-surface tracking-widest">
+                ELOWEN <span class="text-primary-fixed-dim opacity-50">//</span> <span class="text-secondary">SYS_OP_TERMINAL</span>
+</div>
+<p class="font-code-sm text-code-sm uppercase text-outline">
+                © 2024 ELOWEN // ALL_RIGHTS_RESERVED
+            </p>
+</div>
+<div class="flex gap-8">
+<a class="font-code-sm text-code-sm uppercase text-outline hover:text-secondary-fixed-dim hover:tracking-tighter transition-all glitch-hover" href="#">GITHUB</a>
+<a class="font-code-sm text-code-sm uppercase text-outline hover:text-secondary-fixed-dim hover:tracking-tighter transition-all glitch-hover" href="#">LINKEDIN</a>
+<a class="font-code-sm text-code-sm uppercase text-outline hover:text-secondary-fixed-dim hover:tracking-tighter transition-all glitch-hover" href="#">SOURCE</a>
+</div>
+<div class="text-on-surface-variant font-code-sm text-[10px] opacity-30 select-none hidden md:block">
+            UUID: 9a2b-8c4d-1e5f-0g3h
+        </div>
+</div>
+</footer>
+<script>
+    // Mouse Ripple Effect
+    const ripple = document.getElementById('mouse-ripple');
+    document.addEventListener('mousemove', (e) => {
+        ripple.style.left = e.clientX + 'px';
+        ripple.style.top = e.clientY + 'px';
+        
+        // Slight expansion effect on move
+        ripple.style.width = '30px';
+        ripple.style.height = '30px';
+        
+        clearTimeout(ripple.timeout);
+        ripple.timeout = setTimeout(() => {
+            ripple.style.width = '40px';
+            ripple.style.height = '40px';
+        }, 100);
+    });
+
+    // Micro-interaction: Glitch effect on hover for certain elements
+    document.querySelectorAll('.glitch-hover').forEach(el => {
+        el.addEventListener('mouseover', () => {
+            const interval = setInterval(() => {
+                el.style.transform = `translate(${Math.random() * 2 - 1}px, ${Math.random() * 2 - 1}px)`;
+            }, 50);
+            el._glitchInterval = interval;
+        });
+        el.addEventListener('mouseout', () => {
+            clearInterval(el._glitchInterval);
+            el.style.transform = 'translate(0, 0)';
+        });
+    });
+
+    // Navigation Link Smooth Crossfade (Simulated)
+    document.querySelectorAll('.nav-link-transition').forEach(link => {
+        link.addEventListener('click', (e) => {
+            if (link.getAttribute('href') === '#') {
+                e.preventDefault();
+                document.body.style.opacity = '0';
+                setTimeout(() => {
+                    document.body.style.opacity = '1';
+                }, 400);
+            }
+        });
+    });
+
+    // Micro-interaction: Handle terminal form submission simulation
+    const submitBtn = document.querySelector('button.bg-primary-container');
+    if (submitBtn) {
+        submitBtn.addEventListener('click', () => {
+            const originalText = submitBtn.innerText;
+            submitBtn.innerHTML = 'ESTABLISHING_LINK...';
+            submitBtn.disabled = true;
+            submitBtn.classList.add('opacity-50');
+            
+            setTimeout(() => {
+                submitBtn.innerHTML = 'PROTOCOL_SENT_SUCCESS';
+                submitBtn.classList.remove('bg-primary-container');
+                submitBtn.classList.add('bg-tertiary-container', 'text-on-tertiary');
+                
+                setTimeout(() => {
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.classList.remove('bg-tertiary-container', 'text-on-tertiary', 'opacity-50');
+                    submitBtn.classList.add('bg-primary-container', 'text-on-primary');
+                    submitBtn.disabled = false;
+                }, 3000);
+            }, 2000);
+        });
+    }
+</script>
+</body></html>

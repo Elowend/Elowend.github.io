@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ELOWEN // SYS_OP_TERMINAL</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&amp;family=Space+Grotesk:wght@300;400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        @keyframes scanline {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(100%); }
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+        @keyframes glitch-anim {
+            0% { text-shadow: 0.05em 0 0 #00ff88, -0.05em -0.025em 0 #fe00fe, -0.025em 0.05em 0 #3cd7ff; }
+            14% { text-shadow: 0.05em 0 0 #00ff88, -0.05em -0.025em 0 #fe00fe, -0.025em 0.05em 0 #3cd7ff; }
+            15% { text-shadow: -0.05em -0.025em 0 #00ff88, 0.025em 0.025em 0 #fe00fe, -0.05em -0.05em 0 #3cd7ff; }
+            49% { text-shadow: -0.05em -0.025em 0 #00ff88, 0.025em 0.025em 0 #fe00fe, -0.05em -0.05em 0 #3cd7ff; }
+            50% { text-shadow: 0.025em 0.05em 0 #00ff88, 0.05em 0 0 #fe00fe, 0.05em -0.05em 0 #3cd7ff; }
+            99% { text-shadow: 0.025em 0.05em 0 #00ff88, 0.05em 0 0 #fe00fe, 0.05em -0.05em 0 #3cd7ff; }
+            100% { text-shadow: -0.025em 0 0 #00ff88, -0.025em -0.025em 0 #fe00fe, -0.025em -0.05em 0 #3cd7ff; }
+        }
+        @keyframes crt-boot {
+            0% { transform: scaleY(0.005) scaleX(0); opacity: 0; filter: brightness(10); }
+            50% { transform: scaleY(0.005) scaleX(1); opacity: 1; filter: brightness(5); }
+            100% { transform: scaleY(1) scaleX(1); opacity: 1; filter: brightness(1); }
+        }
+        @keyframes noise {
+            0%, 100% { transform: translate(0, 0); }
+            10% { transform: translate(-5%, -5%); }
+            20% { transform: translate(-10%, 5%); }
+            30% { transform: translate(5%, -10%); }
+            40% { transform: translate(-5%, 15%); }
+            50% { transform: translate(-10%, 5%); }
+            60% { transform: translate(15%, 0); }
+            70% { transform: translate(0, 10%); }
+            80% { transform: translate(-15%, 0); }
+            90% { transform: translate(10%, 5%); }
+        }
+        .scanline-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, transparent 50%, rgba(0, 0, 0, 0.3) 51%);
+            background-size: 100% 4px;
+            z-index: 100;
+            pointer-events: none;
+            opacity: 0.2;
+        }
+        .scanline-moving {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100px;
+            background: linear-gradient(to bottom, transparent, rgba(0, 228, 121, 0.1), transparent);
+            animation: scanline 8s linear infinite;
+            z-index: 101;
+            pointer-events: none;
+        }
+        .circuit-bg {
+            background-image: radial-gradient(circle at 2px 2px, #2a2a3a 1px, transparent 0);
+            background-size: 40px 40px;
+            opacity: 0.1;
+        }
+        .boot-sequence {
+            animation: crt-boot 0.8s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+            animation-delay: 1.5s;
+            opacity: 0;
+        }
+        .boot-screen {
+            position: fixed;
+            inset: 0;
+            background: #000;
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none;
+            transition: opacity 0.5s ease-out;
+        }
+        .boot-screen::before {
+            content: "";
+            position: absolute;
+            inset: -100%;
+            background-image: url('data:image/svg+xml,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3%3Ffilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)"/%3E%3C/svg%3E');
+            opacity: 0.1;
+            animation: noise 0.2s steps(2) infinite;
+        }
+        .glitch-text {
+            animation: glitch-anim 3s infinite;
+        }
+        .cursor-blink {
+            display: inline-block;
+            width: 10px;
+            height: 1.2em;
+            background-color: #00e479;
+            animation: blink 1s step-end infinite;
+            vertical-align: middle;
+        }
+        .chamfer-btn {
+            clip-path: polygon(10% 0, 100% 0, 100% 70%, 90% 100%, 0 100%, 0 30%);
+        }
+        .nav-link {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .heading-gradient {
+            background: linear-gradient(to bottom, #003919, #00ff88);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .ripple-container {
+            position: relative;
+            overflow: hidden;
+        }
+    </style>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "outline-variant": "#3b4b3d",
+                    "surface": "#131318",
+                    "on-tertiary-fixed-variant": "#004e5f",
+                    "inverse-on-surface": "#303036",
+                    "tertiary-fixed": "#b4ebff",
+                    "inverse-primary": "#006d37",
+                    "surface-container-low": "#1b1b20",
+                    "surface-tint": "#00e479",
+                    "on-primary-container": "#007139",
+                    "secondary-container": "#fe00fe",
+                    "surface-variant": "#35343a",
+                    "on-tertiary-container": "#006b82",
+                    "on-tertiary": "#003642",
+                    "on-primary": "#003919",
+                    "on-primary-fixed-variant": "#005228",
+                    "on-tertiary-fixed": "#001f27",
+                    "tertiary-container": "#a7e8ff",
+                    "on-secondary-fixed": "#380038",
+                    "on-surface-variant": "#b9cbb9",
+                    "outline": "#849585",
+                    "tertiary-fixed-dim": "#3cd7ff",
+                    "tertiary": "#f6fcff",
+                    "surface-bright": "#39383e",
+                    "primary-container": "#00ff88",
+                    "on-secondary": "#5b005b",
+                    "surface-container-lowest": "#0e0e13",
+                    "on-surface": "#e4e1e9",
+                    "secondary-fixed": "#ffd7f5",
+                    "primary": "#f1ffef",
+                    "primary-fixed-dim": "#00e479",
+                    "on-secondary-container": "#500050",
+                    "error-container": "#93000a",
+                    "inverse-surface": "#e4e1e9",
+                    "secondary-fixed-dim": "#ffabf3",
+                    "on-background": "#e4e1e9",
+                    "surface-container": "#1f1f25",
+                    "surface-dim": "#131318",
+                    "on-secondary-fixed-variant": "#810081",
+                    "surface-container-highest": "#35343a",
+                    "on-primary-fixed": "#00210c",
+                    "secondary": "#ffabf3",
+                    "error": "#ffb4ab",
+                    "on-error": "#690005",
+                    "primary-fixed": "#60ff99",
+                    "on-error-container": "#ffdad6",
+                    "background": "#131318",
+                    "surface-container-high": "#2a292f"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "margin-desktop": "64px",
+                    "container-max": "1280px",
+                    "gutter": "24px",
+                    "margin-mobile": "16px",
+                    "unit": "4px"
+            },
+            "fontFamily": {
+                    "body-lg": ["JetBrains Mono"],
+                    "display-lg": ["Space Grotesk"],
+                    "headline-lg-mobile": ["Space Grotesk"],
+                    "code-sm": ["JetBrains Mono"],
+                    "headline-md": ["Space Grotesk"],
+                    "body-md": ["JetBrains Mono"],
+                    "headline-lg": ["Space Grotesk"],
+                    "label-md": ["JetBrains Mono"]
+            },
+            "fontSize": {
+                    "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "display-lg": ["72px", {"lineHeight": "1.1", "letterSpacing": "0.1em", "fontWeight": "700"}],
+                    "headline-lg-mobile": ["32px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                    "code-sm": ["12px", {"lineHeight": "1.4", "fontWeight": "400"}],
+                    "headline-md": ["24px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                    "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "headline-lg": ["48px", {"lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                    "label-md": ["14px", {"lineHeight": "1.4", "letterSpacing": "0.05em", "fontWeight": "500"}]
+            }
+          },
+        },
+      }
+    </script>
+</head>
+<body class="bg-background text-on-background selection:bg-primary-container selection:text-on-primary-container ripple-container overflow-x-hidden">
+<!-- Boot Animation Overlay -->
+<div class="boot-screen" id="bootScreen">
+<div class="font-code-sm text-primary-fixed-dim text-center">
+<div class="text-left mb-4 opacity-70" id="bootLog"></div>
+<p class="animate-pulse">_ESTABLISHING_LINK</p>
+</div>
+</div>
+<!-- FX Layers -->
+<div class="scanline-overlay"></div>
+<div class="scanline-moving"></div>
+<div class="fixed inset-0 circuit-bg pointer-events-none"></div>
+<!-- Navigation Shell -->
+<header class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-margin-desktop py-4 max-w-container-max mx-auto bg-background/80 backdrop-blur-md border-b-2 border-outline-variant">
+<div class="font-display-lg text-display-lg text-primary-fixed-dim drop-shadow-[0_0_10px_rgba(0,228,121,0.6)] animate-pulse" style="font-size: 2.5rem; line-height: 1;">E</div>
+<nav class="hidden md:flex items-center gap-8">
+<a class="nav-link font-body-md text-body-md uppercase tracking-widest text-primary-fixed-dim border-b-2 border-primary-fixed-dim pb-1 shadow-[0_0_15px_rgba(0,255,136,0.4)]" href="#">HOME</a>
+<a class="nav-link font-body-md text-body-md uppercase tracking-widest text-on-surface-variant hover:text-primary-fixed-dim hover:skew-x-2 hover:drop-shadow-[0_0_8px_rgba(0,255,136,0.8)]" href="#">ABOUT ME</a>
+<a class="nav-link font-body-md text-body-md uppercase tracking-widest text-on-surface-variant hover:text-primary-fixed-dim hover:skew-x-2 hover:drop-shadow-[0_0_8px_rgba(0,255,136,0.8)]" href="#">WORKS</a>
+<a class="nav-link font-body-md text-body-md uppercase tracking-widest text-on-surface-variant hover:text-primary-fixed-dim hover:skew-x-2 hover:drop-shadow-[0_0_8px_rgba(0,255,136,0.8)]" href="#">CONTACT ME</a>
+</nav>
+<div class="flex items-center text-primary-fixed-dim">
+<span class="material-symbols-outlined text-2xl" data-icon="terminal">terminal</span>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="min-h-screen flex flex-col items-center justify-center px-margin-mobile md:px-margin-desktop pt-24 pb-12 boot-sequence">
+<!-- Hero Section -->
+<section class="relative w-full max-w-container-max flex flex-col items-center md:items-start text-center md:text-left">
+<!-- Technical Artifacts -->
+<div class="absolute -top-12 left-0 font-code-sm text-code-sm text-outline-variant opacity-50 hidden md:block select-none">
+            0x01_INITIALIZING_SEQUENCE<br/>
+            SEC_LEVEL: ROOT_ADMIN<br/>
+            STATUS: ONLINE
+        </div>
+<!-- Massive Background 'E' for Depth -->
+<div class="absolute -top-32 md:-left-24 -z-10 font-display-lg text-[24rem] text-primary-fixed-dim/5 select-none pointer-events-none blur-[2px]">E</div>
+<div class="mb-6 flex flex-col gap-2">
+<div class="bg-surface-container-low border-l-4 border-primary-fixed-dim px-4 py-2 self-center md:self-start">
+<p class="font-code-sm text-code-sm text-primary-fixed-dim tracking-widest uppercase">system_v0.9.4_stable</p>
+</div>
+<h1 class="font-display-lg text-[4rem] md:text-[6rem] leading-none uppercase tracking-tighter heading-gradient glitch-text filter drop-shadow-[0_0_15px_rgba(0,228,121,0.3)]">
+                HI HERE IS Elowen
+            </h1>
+</div>
+<div class="mb-12">
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">
+<span class="text-primary-fixed-dim">&gt;</span> <span id="typing-container"></span><span class="cursor-blink"></span>
+</p>
+</div>
+<div class="flex flex-wrap gap-gutter justify-center md:justify-start">
+<!-- Primary CTA -->
+<button class="chamfer-btn bg-primary-container text-on-primary px-10 py-4 font-label-md text-label-md uppercase tracking-widest font-bold shadow-[0_0_30px_rgba(0,255,136,0.5)] hover:shadow-[0_0_50px_rgba(0,255,136,0.7)] hover:scale-105 active:scale-95 transition-all duration-200">
+                CONTACT ME
+            </button>
+<!-- Secondary Action -->
+<button class="border-2 border-secondary-fixed-dim text-secondary-fixed-dim px-10 py-4 font-label-md text-label-md uppercase tracking-widest font-bold hover:bg-secondary-fixed-dim/10 transition-all duration-300 flex items-center gap-2">
+<span class="material-symbols-outlined" data-icon="download">download</span>
+                SOURCE_CODE
+            </button>
+</div>
+<!-- Dashboard Style Footer Grid -->
+<div class="mt-24 w-full grid grid-cols-1 md:grid-cols-4 gap-4">
+<div class="bg-surface-container-lowest border border-outline-variant p-4 flex flex-col gap-2">
+<div class="flex justify-between items-center border-b border-outline-variant pb-2">
+<span class="font-code-sm text-code-sm text-outline">REF_001</span>
+<span class="material-symbols-outlined text-sm text-primary-fixed-dim" data-icon="bolt" style="font-variation-settings: 'FILL' 1;">bolt</span>
+</div>
+<h3 class="font-label-md text-label-md text-primary heading-gradient">FULL STACK DEV</h3>
+<p class="font-code-sm text-code-sm text-on-surface-variant">Core Protocol Engineering</p>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant p-4 flex flex-col gap-2">
+<div class="flex justify-between items-center border-b border-outline-variant pb-2">
+<span class="font-code-sm text-code-sm text-outline">REF_002</span>
+<span class="material-symbols-outlined text-sm text-secondary" data-icon="grid_view" style="font-variation-settings: 'FILL' 1;">grid_view</span>
+</div>
+<h3 class="font-label-md text-label-md text-primary heading-gradient">UI ARCHITECT</h3>
+<p class="font-code-sm text-code-sm text-on-surface-variant">Neural Interface Design</p>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant p-4 flex flex-col gap-2">
+<div class="flex justify-between items-center border-b border-outline-variant pb-2">
+<span class="font-code-sm text-code-sm text-outline">REF_003</span>
+<span class="material-symbols-outlined text-sm text-tertiary-fixed-dim" data-icon="security" style="font-variation-settings: 'FILL' 1;">security</span>
+</div>
+<h3 class="font-label-md text-label-md text-primary heading-gradient">CYBER_OPS</h3>
+<p class="font-code-sm text-code-sm text-on-surface-variant">Encrypted Systems Security</p>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant p-4 flex flex-col gap-2">
+<div class="flex justify-between items-center border-b border-outline-variant pb-2">
+<span class="font-code-sm text-code-sm text-outline">REF_004</span>
+<span class="material-symbols-outlined text-sm text-error" data-icon="hub" style="font-variation-settings: 'FILL' 1;">hub</span>
+</div>
+<h3 class="font-label-md text-label-md text-primary heading-gradient">INFRASTRUCTURE</h3>
+<p class="font-code-sm text-code-sm text-on-surface-variant">Cloud Node Management</p>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="w-full px-margin-desktop py-12 flex flex-col md:flex-row justify-between items-center gap-gutter bg-surface-container-lowest border-t-2 border-outline-variant">
+<div class="text-label-md font-label-md text-on-surface">
+        © 2024 ELOWEN // SYS_OP_TERMINAL
+    </div>
+<div class="flex items-center gap-8">
+<a class="nav-link font-code-sm text-code-sm uppercase text-outline hover:text-secondary-fixed-dim hover:tracking-tighter" href="#">GITHUB</a>
+<a class="nav-link font-code-sm text-code-sm uppercase text-outline hover:text-secondary-fixed-dim hover:tracking-tighter" href="#">LINKEDIN</a>
+<a class="nav-link font-code-sm text-code-sm uppercase text-outline hover:text-secondary-fixed-dim hover:tracking-tighter" href="#">SOURCE</a>
+</div>
+<div class="font-code-sm text-code-sm text-outline-variant uppercase">
+        loc: 127.0.0.1 // latency: 14ms
+    </div>
+</footer>
+<script>
+    // Boot sequence handling
+    const bootScreen = document.getElementById('bootScreen');
+    const bootLog = document.getElementById('bootLog');
+    const logMessages = [
+        "BIOS_REV_1.0.4...",
+        "MEMORY_CHECK: OK",
+        "LOADING_ASSETS...",
+        "DECRYPTING_NODE...",
+        "ACCESS_GRANTED"
+    ];
+
+    async function runBootSequence() {
+        for (const msg of logMessages) {
+            const line = document.createElement('div');
+            line.textContent = `> ${msg}`;
+            bootLog.appendChild(line);
+            await new Promise(r => setTimeout(r, 200));
+        }
+        
+        setTimeout(() => {
+            bootScreen.style.opacity = '0';
+            setTimeout(() => bootScreen.remove(), 500);
+        }, 300);
+    }
+
+    runBootSequence();
+
+    // Mouse tracking ripple effect
+    document.addEventListener('mousemove', (e) => {
+        const container = document.body;
+        
+        // Performance throttle
+        if (Math.random() > 0.08) return;
+
+        const ripple = document.createElement('div');
+        // Accent green/cyan from palette: #00e479 (primary-fixed-dim) or #3cd7ff (tertiary-fixed-dim)
+        ripple.className = 'absolute rounded-full border border-primary-fixed-dim/30 pointer-events-none';
+        
+        const size = Math.random() * 80 + 40;
+        ripple.style.width = `${size}px`;
+        ripple.style.height = `${size}px`;
+        ripple.style.left = `${e.clientX - size / 2}px`;
+        ripple.style.top = `${e.clientY - size / 2}px`;
+        ripple.style.position = 'fixed';
+        ripple.style.zIndex = '5';
+        
+        container.appendChild(ripple);
+
+        ripple.animate([
+            { transform: 'scale(0)', opacity: 0.6 },
+            { transform: 'scale(2.5)', opacity: 0 }
+        ], {
+            duration: 1200,
+            easing: 'cubic-bezier(0.1, 0, 0.3, 1)'
+        }).onfinish = () => ripple.remove();
+    });
+
+    // Typing effect
+    const terminalText = "initializing portfolio...";
+    const typingContainer = document.getElementById('typing-container');
+    let i = 0;
+    
+    function typeWriter() {
+        if (i < terminalText.length) {
+            typingContainer.textContent += terminalText.charAt(i);
+            i++;
+            setTimeout(typeWriter, 50 + Math.random() * 80);
+        }
+    }
+    
+    // Wait for CRT boot animation to start typing
+    setTimeout(typeWriter, 2200);
+
+    // Smooth navigation click behavior (conceptual crossfade)
+    document.querySelectorAll('.nav-link').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            document.querySelector('main').animate([
+                { opacity: 1, filter: 'blur(0px)' },
+                { opacity: 0, filter: 'blur(10px)' }
+            ], {
+                duration: 400,
+                fill: 'forwards'
+            }).onfinish = () => {
+                // In a real app, page switch happens here.
+                // We'll just fade back in to simulate the smooth transition.
+                document.querySelector('main').animate([
+                    { opacity: 0, filter: 'blur(10px)' },
+                    { opacity: 1, filter: 'blur(0px)' }
+                ], { duration: 400, fill: 'forwards' });
+            };
+        });
+    });
+</script>
+</body></html>

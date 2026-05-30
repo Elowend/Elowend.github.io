@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ELOWEN // WORKS</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&amp;family=Space+Grotesk:wght@300;400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        :root {
+            --bg-color: #0a0a0f;
+            --grid-color: rgba(42, 42, 58, 0.1);
+        }
+        body {
+            background-color: var(--bg-color);
+            background-image: 
+                linear-gradient(var(--grid-color) 1px, transparent 1px),
+                linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+            background-size: 40px 40px;
+            color: #e4e1e9;
+            overflow-x: hidden;
+        }
+        .scanline {
+            width: 100%;
+            height: 2px;
+            background: rgba(0, 255, 136, 0.1);
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 100;
+            pointer-events: none;
+            animation: scanline 8s linear infinite;
+        }
+        @keyframes scanline {
+            0% { transform: translateY(-100vh); }
+            100% { transform: translateY(100vh); }
+        }
+        .glitch-hover:hover {
+            animation: glitch 0.2s steps(2) infinite;
+        }
+        @keyframes glitch {
+            0% { transform: translate(0); }
+            20% { transform: translate(-2px, 1px); }
+            40% { transform: translate(-2px, -1px); }
+            60% { transform: translate(2px, 1px); }
+            80% { transform: translate(2px, -1px); }
+            100% { transform: translate(0); }
+        }
+        .terminal-header-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        .chamfer-card {
+            clip-path: polygon(
+                0% 10px, 10px 0%, 
+                calc(100% - 10px) 0%, 100% 10px, 
+                100% calc(100% - 10px), calc(100% - 10px) 100%, 
+                10px 100%, 0% calc(100% - 10px)
+            );
+        }
+        .blinking-cursor::after {
+            content: '_';
+            animation: blink 1s step-end infinite;
+        }
+        @keyframes blink {
+            50% { opacity: 0; }
+        }
+        .gradient-mesh {
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(0, 228, 121, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, rgba(255, 0, 255, 0.1) 0px, transparent 50%),
+                radial-gradient(at 50% 100%, rgba(0, 212, 255, 0.1) 0px, transparent 50%);
+        }
+    </style>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "outline-variant": "#3b4b3d",
+                    "surface": "#131318",
+                    "on-tertiary-fixed-variant": "#004e5f",
+                    "inverse-on-surface": "#303036",
+                    "tertiary-fixed": "#b4ebff",
+                    "inverse-primary": "#006d37",
+                    "surface-container-low": "#1b1b20",
+                    "surface-tint": "#00e479",
+                    "on-primary-container": "#007139",
+                    "secondary-container": "#fe00fe",
+                    "surface-variant": "#35343a",
+                    "on-tertiary-container": "#006b82",
+                    "on-tertiary": "#003642",
+                    "on-primary": "#003919",
+                    "on-primary-fixed-variant": "#005228",
+                    "on-tertiary-fixed": "#001f27",
+                    "tertiary-container": "#a7e8ff",
+                    "on-secondary-fixed": "#380038",
+                    "on-surface-variant": "#b9cbb9",
+                    "outline": "#849585",
+                    "tertiary-fixed-dim": "#3cd7ff",
+                    "tertiary": "#f6fcff",
+                    "surface-bright": "#39383e",
+                    "primary-container": "#00ff88",
+                    "on-secondary": "#5b005b",
+                    "surface-container-lowest": "#0e0e13",
+                    "on-surface": "#e4e1e9",
+                    "secondary-fixed": "#ffd7f5",
+                    "primary": "#f1ffef",
+                    "primary-fixed-dim": "#00e479",
+                    "on-secondary-container": "#500050",
+                    "error-container": "#93000a",
+                    "inverse-surface": "#e4e1e9",
+                    "secondary-fixed-dim": "#ffabf3",
+                    "on-background": "#e4e1e9",
+                    "surface-container": "#1f1f25",
+                    "surface-dim": "#131318",
+                    "on-secondary-fixed-variant": "#810081",
+                    "surface-container-highest": "#35343a",
+                    "on-primary-fixed": "#00210c",
+                    "secondary": "#ffabf3",
+                    "error": "#ffb4ab",
+                    "on-error": "#690005",
+                    "primary-fixed": "#60ff99",
+                    "on-error-container": "#ffdad6",
+                    "background": "#131318",
+                    "surface-container-high": "#2a292f"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "margin-desktop": "64px",
+                    "container-max": "1280px",
+                    "gutter": "24px",
+                    "margin-mobile": "16px",
+                    "unit": "4px"
+            },
+            "fontFamily": {
+                    "body-lg": ["JetBrains Mono"],
+                    "display-lg": ["Space Grotesk"],
+                    "headline-lg-mobile": ["Space Grotesk"],
+                    "code-sm": ["JetBrains Mono"],
+                    "headline-md": ["Space Grotesk"],
+                    "body-md": ["JetBrains Mono"],
+                    "headline-lg": ["Space Grotesk"],
+                    "label-md": ["JetBrains Mono"]
+            },
+            "fontSize": {
+                    "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "display-lg": ["72px", {"lineHeight": "1.1", "letterSpacing": "0.1em", "fontWeight": "700"}],
+                    "headline-lg-mobile": ["32px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                    "code-sm": ["12px", {"lineHeight": "1.4", "fontWeight": "400"}],
+                    "headline-md": ["24px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                    "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "headline-lg": ["48px", {"lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                    "label-md": ["14px", {"lineHeight": "1.4", "letterSpacing": "0.05em", "fontWeight": "500"}]
+            }
+          },
+        },
+      }
+    </script>
+</head>
+<body class="font-body-md text-body-md">
+<div class="scanline"></div>
+<!-- TopNavBar -->
+<nav class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-margin-desktop py-4 max-w-container-max mx-auto bg-background/80 backdrop-blur-md border-b-2 border-outline-variant">
+<div class="font-display-lg text-display-lg text-primary-fixed-dim drop-shadow-[0_0_10px_rgba(0,228,121,0.6)] animate-pulse">E</div>
+<div class="hidden md:flex gap-gutter font-body-md text-body-md uppercase tracking-widest items-center">
+<a class="text-on-surface-variant hover:text-primary-fixed-dim transition-all duration-300 hover:skew-x-2 hover:drop-shadow-[0_0_8px_rgba(0,255,136,0.8)]" href="#">HOME</a>
+<a class="text-on-surface-variant hover:text-primary-fixed-dim transition-all duration-300 hover:skew-x-2 hover:drop-shadow-[0_0_8px_rgba(0,255,136,0.8)]" href="#">ABOUT ME</a>
+<a class="text-primary-fixed-dim border-b-2 border-primary-fixed-dim pb-1 shadow-[0_0_15px_rgba(0,255,136,0.4)]" href="#">WORKS</a>
+<a class="text-on-surface-variant hover:text-primary-fixed-dim transition-all duration-300 hover:skew-x-2 hover:drop-shadow-[0_0_8px_rgba(0,255,136,0.8)]" href="#">CONTACT ME</a>
+<div class="ml-4 p-2 bg-surface-container-high rounded-full cursor-pointer hover:bg-primary-container group transition-colors">
+<span class="material-symbols-outlined text-primary-fixed-dim group-hover:text-on-primary">terminal</span>
+</div>
+</div>
+<div class="md:hidden">
+<span class="material-symbols-outlined text-primary-fixed-dim">menu</span>
+</div>
+</nav>
+<main class="pt-32 pb-24 px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto min-h-screen">
+<!-- Header / Status Section -->
+<header class="mb-16 border-l-4 border-primary-fixed-dim pl-6 py-2">
+<h1 class="font-display-lg text-headline-lg-mobile md:text-headline-lg uppercase mb-2">
+                SYS.DIR/PROJECTS
+            </h1>
+<p class="font-body-lg text-on-surface-variant max-w-2xl blinking-cursor">
+                A repository of digital artifacts, experimental protocols, and high-frequency development cycles.
+            </p>
+</header>
+<!-- Project Grid -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<!-- Project 0x01 -->
+<div class="group relative transition-all duration-500">
+<div class="absolute -inset-0.5 bg-primary-fixed-dim opacity-0 group-hover:opacity-40 blur transition-all duration-500 rounded-lg"></div>
+<div class="relative bg-surface-container-low border-2 border-outline-variant hover:border-primary-fixed-dim transition-colors chamfer-card overflow-hidden h-full flex flex-col shadow-[0_0_20px_rgba(0,0,0,0.5)]">
+<!-- Chrome -->
+<div class="bg-surface-container-highest px-4 py-2 flex justify-between items-center border-b border-outline-variant">
+<div class="flex gap-1.5">
+<span class="terminal-header-dot bg-[#ff5f56]"></span>
+<span class="terminal-header-dot bg-[#ffbd2e]"></span>
+<span class="terminal-header-dot bg-[#27c93f]"></span>
+</div>
+<span class="font-code-sm text-code-sm text-outline opacity-50 uppercase tracking-tighter">REF_001</span>
+</div>
+<!-- Body -->
+<div class="p-6 flex flex-col h-full">
+<div class="w-full h-40 bg-[#1c1c2e] mb-6 gradient-mesh flex items-center justify-center">
+<span class="material-symbols-outlined text-primary-fixed-dim text-6xl" style="font-variation-settings: 'FILL' 1;">dataset</span>
+</div>
+<h3 class="font-body-md text-headline-md uppercase mb-3 text-primary-fixed-dim">NEURAL_DASH_V4</h3>
+<p class="text-on-surface-variant font-body-md mb-6 flex-grow">
+                            Real-time data visualization engine for biometric feedback loops. Implements WebGL for high-performance rendering.
+                        </p>
+<div class="flex flex-wrap gap-2 mt-auto">
+<span class="bg-surface-container-highest text-tertiary-fixed-dim px-3 py-1 font-code-sm text-code-sm uppercase">#REACT</span>
+<span class="bg-surface-container-highest text-tertiary-fixed-dim px-3 py-1 font-code-sm text-code-sm uppercase">#THREEJS</span>
+<span class="bg-surface-container-highest text-tertiary-fixed-dim px-3 py-1 font-code-sm text-code-sm uppercase">#GLSL</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Project 0x02 -->
+<div class="group relative transition-all duration-500">
+<div class="absolute -inset-0.5 bg-secondary-container opacity-0 group-hover:opacity-40 blur transition-all duration-500 rounded-lg"></div>
+<div class="relative bg-surface-container-low border-2 border-outline-variant hover:border-secondary-container transition-colors chamfer-card overflow-hidden h-full flex flex-col shadow-[0_0_20px_rgba(0,0,0,0.5)]">
+<!-- Chrome -->
+<div class="bg-surface-container-highest px-4 py-2 flex justify-between items-center border-b border-outline-variant">
+<div class="flex gap-1.5">
+<span class="terminal-header-dot bg-[#ff5f56]"></span>
+<span class="terminal-header-dot bg-[#ffbd2e]"></span>
+<span class="terminal-header-dot bg-[#27c93f]"></span>
+</div>
+<span class="font-code-sm text-code-sm text-outline opacity-50 uppercase tracking-tighter">REF_002</span>
+</div>
+<!-- Body -->
+<div class="p-6 flex flex-col h-full">
+<div class="w-full h-40 bg-[#1c1c2e] mb-6 gradient-mesh flex items-center justify-center" style="background-image: radial-gradient(at 0% 100%, rgba(255, 0, 255, 0.15) 0px, transparent 50%);">
+<span class="material-symbols-outlined text-secondary-container text-6xl" style="font-variation-settings: 'FILL' 1;">security</span>
+</div>
+<h3 class="font-body-md text-headline-md uppercase mb-3 text-secondary-container">VAULT_PROTOCOL</h3>
+<p class="text-on-surface-variant font-body-md mb-6 flex-grow">
+                            End-to-end encrypted messaging substrate with automated decay cycles for transient communications.
+                        </p>
+<div class="flex flex-wrap gap-2 mt-auto">
+<span class="bg-surface-container-highest text-secondary-fixed-dim px-3 py-1 font-code-sm text-code-sm uppercase">#NODE</span>
+<span class="bg-surface-container-highest text-secondary-fixed-dim px-3 py-1 font-code-sm text-code-sm uppercase">#CRYPTO</span>
+<span class="bg-surface-container-highest text-secondary-fixed-dim px-3 py-1 font-code-sm text-code-sm uppercase">#RUST</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Project 0x03 -->
+<div class="group relative transition-all duration-500">
+<div class="absolute -inset-0.5 bg-tertiary-fixed-dim opacity-0 group-hover:opacity-40 blur transition-all duration-500 rounded-lg"></div>
+<div class="relative bg-surface-container-low border-2 border-outline-variant hover:border-tertiary-fixed-dim transition-colors chamfer-card overflow-hidden h-full flex flex-col shadow-[0_0_20px_rgba(0,0,0,0.5)]">
+<!-- Chrome -->
+<div class="bg-surface-container-highest px-4 py-2 flex justify-between items-center border-b border-outline-variant">
+<div class="flex gap-1.5">
+<span class="terminal-header-dot bg-[#ff5f56]"></span>
+<span class="terminal-header-dot bg-[#ffbd2e]"></span>
+<span class="terminal-header-dot bg-[#27c93f]"></span>
+</div>
+<span class="font-code-sm text-code-sm text-outline opacity-50 uppercase tracking-tighter">REF_003</span>
+</div>
+<!-- Body -->
+<div class="p-6 flex flex-col h-full">
+<div class="w-full h-40 bg-[#1c1c2e] mb-6 gradient-mesh flex items-center justify-center" style="background-image: radial-gradient(at 100% 100%, rgba(0, 212, 255, 0.15) 0px, transparent 50%);">
+<span class="material-symbols-outlined text-tertiary-fixed-dim text-6xl" style="font-variation-settings: 'FILL' 1;">cloud_sync</span>
+</div>
+<h3 class="font-body-md text-headline-md uppercase mb-3 text-tertiary-fixed-dim">SYNAPSE_OS</h3>
+<p class="text-on-surface-variant font-body-md mb-6 flex-grow">
+                            An experimental web-based window manager for decentralized application orchestration.
+                        </p>
+<div class="flex flex-wrap gap-2 mt-auto">
+<span class="bg-surface-container-highest text-tertiary-fixed-dim px-3 py-1 font-code-sm text-code-sm uppercase">#SVELTE</span>
+<span class="bg-surface-container-highest text-tertiary-fixed-dim px-3 py-1 font-code-sm text-code-sm uppercase">#IPFS</span>
+<span class="bg-surface-container-highest text-tertiary-fixed-dim px-3 py-1 font-code-sm text-code-sm uppercase">#CYBER</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Project 0x04 -->
+<div class="group relative transition-all duration-500">
+<div class="absolute -inset-0.5 bg-primary-fixed-dim opacity-0 group-hover:opacity-40 blur transition-all duration-500 rounded-lg"></div>
+<div class="relative bg-surface-container-low border-2 border-outline-variant hover:border-primary-fixed-dim transition-colors chamfer-card overflow-hidden h-full flex flex-col shadow-[0_0_20px_rgba(0,0,0,0.5)]">
+<!-- Chrome -->
+<div class="bg-surface-container-highest px-4 py-2 flex justify-between items-center border-b border-outline-variant">
+<div class="flex gap-1.5">
+<span class="terminal-header-dot bg-[#ff5f56]"></span>
+<span class="terminal-header-dot bg-[#ffbd2e]"></span>
+<span class="terminal-header-dot bg-[#27c93f]"></span>
+</div>
+<span class="font-code-sm text-code-sm text-outline opacity-50 uppercase tracking-tighter">REF_004</span>
+</div>
+<!-- Body -->
+<div class="p-6 flex flex-col h-full">
+<div class="w-full h-40 bg-[#1c1c2e] mb-6 gradient-mesh flex items-center justify-center">
+<span class="material-symbols-outlined text-primary-fixed-dim text-6xl" style="font-variation-settings: 'FILL' 1;">schema</span>
+</div>
+<h3 class="font-body-md text-headline-md uppercase mb-3 text-primary-fixed-dim">VOID_GRAPH</h3>
+<p class="text-on-surface-variant font-body-md mb-6 flex-grow">
+                            Fractal mapping of relational database structures using force-directed graph algorithms.
+                        </p>
+<div class="flex flex-wrap gap-2 mt-auto">
+<span class="bg-surface-container-highest text-tertiary-fixed-dim px-3 py-1 font-code-sm text-code-sm uppercase">#D3JS</span>
+<span class="bg-surface-container-highest text-tertiary-fixed-dim px-3 py-1 font-code-sm text-code-sm uppercase">#NEO4J</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Project 0x05 -->
+<div class="group relative transition-all duration-500">
+<div class="absolute -inset-0.5 bg-secondary-container opacity-0 group-hover:opacity-40 blur transition-all duration-500 rounded-lg"></div>
+<div class="relative bg-surface-container-low border-2 border-outline-variant hover:border-secondary-container transition-colors chamfer-card overflow-hidden h-full flex flex-col shadow-[0_0_20px_rgba(0,0,0,0.5)]">
+<!-- Chrome -->
+<div class="bg-surface-container-highest px-4 py-2 flex justify-between items-center border-b border-outline-variant">
+<div class="flex gap-1.5">
+<span class="terminal-header-dot bg-[#ff5f56]"></span>
+<span class="terminal-header-dot bg-[#ffbd2e]"></span>
+<span class="terminal-header-dot bg-[#27c93f]"></span>
+</div>
+<span class="font-code-sm text-code-sm text-outline opacity-50 uppercase tracking-tighter">REF_005</span>
+</div>
+<!-- Body -->
+<div class="p-6 flex flex-col h-full">
+<div class="w-full h-40 bg-[#1c1c2e] mb-6 gradient-mesh flex items-center justify-center" style="background-image: radial-gradient(at 0% 100%, rgba(255, 0, 255, 0.15) 0px, transparent 50%);">
+<span class="material-symbols-outlined text-secondary-container text-6xl" style="font-variation-settings: 'FILL' 1;">terminal</span>
+</div>
+<h3 class="font-body-md text-headline-md uppercase mb-3 text-secondary-container">SHELL_EXT</h3>
+<p class="text-on-surface-variant font-body-md mb-6 flex-grow">
+                            Custom CLI toolkit for automated workflow deployments and remote environment synchronization.
+                        </p>
+<div class="flex flex-wrap gap-2 mt-auto">
+<span class="bg-surface-container-highest text-secondary-fixed-dim px-3 py-1 font-code-sm text-code-sm uppercase">#GOLANG</span>
+<span class="bg-surface-container-highest text-secondary-fixed-dim px-3 py-1 font-code-sm text-code-sm uppercase">#DOCKER</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Project 0x06 (Placeholder/WIP) -->
+<div class="group relative transition-all duration-500">
+<div class="absolute -inset-0.5 bg-outline opacity-0 group-hover:opacity-20 blur transition-all duration-500 rounded-lg"></div>
+<div class="relative bg-surface-container-lowest border-2 border-dashed border-outline-variant chamfer-card overflow-hidden h-full flex flex-col opacity-60">
+<div class="p-6 flex flex-col items-center justify-center h-full text-center">
+<span class="material-symbols-outlined text-4xl mb-4 animate-pulse">lock</span>
+<h3 class="font-body-md text-headline-md uppercase mb-2">ACCESS_DENIED</h3>
+<p class="font-code-sm text-code-sm text-outline uppercase">Development in progress...</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Pagination / Data Stream Nav -->
+<div class="mt-16 flex flex-col md:flex-row justify-between items-center gap-gutter border-t border-outline-variant pt-8">
+<div class="font-code-sm text-code-sm text-outline uppercase flex items-center gap-4">
+<span>STATUS: STABLE</span>
+<span class="w-2 h-2 bg-primary-fixed-dim rounded-full animate-ping"></span>
+<span>PKT_RECV: 1.2GB</span>
+</div>
+<div class="flex gap-4">
+<button class="bg-transparent border-2 border-secondary-container text-secondary-container px-6 py-2 font-body-md uppercase glitch-hover">
+                    [ PREV_PAGE ]
+                </button>
+<button class="bg-primary-container text-on-primary px-6 py-2 font-body-md uppercase font-bold glitch-hover">
+                    [ NEXT_PAGE ]
+                </button>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="w-full px-margin-desktop flex flex-col md:flex-row justify-between items-center gap-gutter bg-surface-container-lowest border-t-2 border-outline-variant py-12">
+<div class="text-label-md font-label-md text-on-surface">© 2024 ELOWEN // SYS_OP_TERMINAL</div>
+<div class="flex gap-gutter font-code-sm text-code-sm uppercase">
+<a class="text-outline hover:text-secondary-fixed-dim hover:tracking-tighter transition-all" href="#">GITHUB</a>
+<a class="text-outline hover:text-secondary-fixed-dim hover:tracking-tighter transition-all" href="#">LINKEDIN</a>
+<a class="text-outline hover:text-secondary-fixed-dim hover:tracking-tighter transition-all" href="#">SOURCE</a>
+</div>
+</footer>
+<script>
+        // Micro-interactions for terminal dots
+        document.querySelectorAll('.terminal-header-dot').forEach(dot => {
+            dot.addEventListener('mouseenter', () => {
+                dot.style.transform = 'scale(1.2)';
+                dot.style.filter = 'brightness(1.5)';
+            });
+            dot.addEventListener('mouseleave', () => {
+                dot.style.transform = 'scale(1)';
+                dot.style.filter = 'brightness(1)';
+            });
+        });
+
+        // Background noise simulation
+        const canvas = document.createElement('canvas');
+        canvas.style.position = 'fixed';
+        canvas.style.top = '0';
+        canvas.style.left = '0';
+        canvas.style.width = '100%';
+        canvas.style.height = '100%';
+        canvas.style.pointerEvents = 'none';
+        canvas.style.opacity = '0.02';
+        canvas.style.zIndex = '99';
+        document.body.appendChild(canvas);
+
+        const ctx = canvas.getContext('2d');
+        function noise() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            const idata = ctx.createImageData(canvas.width, canvas.height);
+            const buffer32 = new Uint32Array(idata.data.buffer);
+            for (let i = 0; i < buffer32.length; i++) {
+                if (Math.random() < 0.5) buffer32[i] = 0xff000000;
+            }
+            ctx.putImageData(idata, 0, 0);
+            requestAnimationFrame(noise);
+        }
+        // noise(); // Uncomment for true CRT static feel
+    </script>
+</body></html>
